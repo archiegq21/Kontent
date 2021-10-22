@@ -41,7 +41,7 @@ class ITunesServiceImpl(
             attribute?.let { parameter("attribute", it) }
             parameter("limit", limit)
             parameter("lang", lang)
-            parameter("version", version)
+            parameter("version", version.number)
             parameter("explicit", explicit)
         }
     }

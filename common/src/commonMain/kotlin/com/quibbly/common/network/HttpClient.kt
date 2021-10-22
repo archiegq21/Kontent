@@ -7,6 +7,7 @@ import io.ktor.client.features.json.*
 import io.ktor.client.features.json.serializer.*
 import io.ktor.client.features.logging.*
 import io.ktor.client.request.*
+import io.ktor.http.*
 import io.ktor.http.URLProtocol.Companion.HTTPS
 import kotlinx.serialization.json.Json
 
@@ -16,9 +17,15 @@ fun HttpClient(
     json: Json,
     engine: HttpClientEngine,
 ) = HttpClient(engine) {
-    defaultRequest(block)
+    defaultRequest {
+        block()
+    }
     install(JsonFeature) {
         serializer = KotlinxSerializer(json)
+        receiveContentTypeMatchers = receiveContentTypeMatchers + object : ContentTypeMatcher {
+            override fun contains(contentType: ContentType): Boolean =
+                contentType == ContentType.Text.JavaScript.withParameter("charset", "utf-8")
+        }
     }
     install(HttpTimeout) {
         requestTimeoutMillis = 30000
