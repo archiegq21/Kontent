@@ -52,6 +52,11 @@ object Libs {
             const val test = "org.jetbrains.kotlinx:kotlinx-coroutines-test:${coroutine_version}"
         }
 
+        object DateTime {
+            private const val version = "0.3.0"
+            const val core = "org.jetbrains.kotlinx:kotlinx-datetime:$version"
+        }
+
         object Ktor {
             private const val ktor_version = "1.6.4"
             private const val logback_version = "1.2.5"

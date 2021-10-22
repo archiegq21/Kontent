@@ -1,5 +1,6 @@
 package com.quibbly.common.domain
 
+import com.quibbly.common.domain.search.*
 import io.ktor.client.*
 import io.ktor.client.request.*
 
@@ -14,7 +15,7 @@ interface ITunesService {
         lang: Language = Language.en_us,
         version: Version = Version.v2,
         explicit: Explicit = Explicit.Yes,
-    ): Result<String>
+    ): Result<SearchResponse>
 }
 
 class ITunesServiceImpl(
@@ -32,12 +33,12 @@ class ITunesServiceImpl(
         version: Version,
         explicit: Explicit,
     ) = httpClient.runCatching {
-        get<String>("/search") {
+        get<SearchResponse>("/search") {
             parameter("term", term)
             parameter("country", country)
             parameter("media", media)
-            entity?.let { parameter("entity", entity) }
-            attribute?.let { parameter("attribute", attribute) }
+            entity?.let { parameter("entity", it) }
+            attribute?.let { parameter("attribute", it) }
             parameter("limit", limit)
             parameter("lang", lang)
             parameter("version", version)

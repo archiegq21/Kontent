@@ -74,6 +74,8 @@ kotlin {
                 api(Libs.Kotlin.Ktor.serialization)
                 implementation(Libs.Kotlin.Ktor.logging)
 
+                implementation(Libs.Kotlin.DateTime.core)
+
                 implementation(Libs.Koin.core)
 
                 implementation(Libs.SqlDelight.runtime)
