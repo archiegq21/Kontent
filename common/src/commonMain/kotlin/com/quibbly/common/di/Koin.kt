@@ -9,6 +9,8 @@ fun initKoin(
     modules(
         platformModule,
         networkModule(),
+        localSourceModule(),
         itunesModule(),
+        dashboardModule(),
     )
 }

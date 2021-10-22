@@ -98,6 +98,9 @@ dependencies {
     // Coroutines
     implementation(Libs.Kotlin.Coroutines.android)
 
+    // DateTime
+    implementation(Libs.Kotlin.DateTime.core)
+
     // Ktor
     implementation(Libs.Kotlin.Ktor.android_core)
     implementation(Libs.Kotlin.Ktor.logback)
