@@ -6,4 +6,6 @@
 
     <string name="last_visited_date">Last Visited Date: %1$s</string>
     <string name="your_avatar">Your Avatar</string>
+
+    <string name="movies">Movies</string>
 </resources>

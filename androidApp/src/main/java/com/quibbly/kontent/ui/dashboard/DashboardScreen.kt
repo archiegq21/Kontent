@@ -33,8 +33,12 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
+import com.google.accompanist.insets.LocalWindowInsets
+import com.google.accompanist.insets.navigationBarsHeight
+import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.statusBarsPadding
 import com.quibbly.kontent.R
+import com.quibbly.kontent.ui.list.ContentList
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toJavaLocalDateTime
 import java.time.format.DateTimeFormatter
@@ -55,7 +59,16 @@ fun DashboardScreen(
             )
         },
     ) {
-
+        ContentList(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = rememberInsetsPaddingValues(
+                insets = LocalWindowInsets.current.navigationBars,
+                additionalTop = 16.dp,
+                additionalEnd = 16.dp,
+                additionalBottom = 16.dp,
+                additionalStart = 16.dp,
+            )
+        )
     }
 }
 
@@ -70,9 +83,6 @@ private fun SearchTopBar(
     modifier: Modifier = Modifier,
 ) {
     val searchTextFieldInteractionSource = remember { MutableInteractionSource() }
-    val searchTextFieldFocused by searchTextFieldInteractionSource.collectIsFocusedAsState()
-    val searchCorners by animateIntAsState(targetValue = if (searchTextFieldFocused) 10 else 50)
-    val searchShape by remember { derivedStateOf { RoundedCornerShape(searchCorners) } }
 
     Surface(
         modifier = modifier
@@ -98,7 +108,7 @@ private fun SearchTopBar(
             TextField(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clip(searchShape),
+                    .clip(RoundedCornerShape(50)),
                 value = searchQuery,
                 keyboardOptions = KeyboardOptions(
                     imeAction = ImeAction.Done,
@@ -135,7 +145,7 @@ private fun SearchTopBar(
                         }
                     }
                 },
-                shape = searchShape,
+                shape = RoundedCornerShape(50),
                 colors = TextFieldDefaults.textFieldColors(
                     unfocusedIndicatorColor = Color.Transparent,
                 )
@@ -152,7 +162,8 @@ fun UserHeader(
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
             .padding(horizontal = 16.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
@@ -178,7 +189,8 @@ fun UserHeader(
             imageVector = Icons.Rounded.Person,
             tint = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
             contentDescription = stringResource(R.string.your_avatar),
-            modifier = Modifier.size(52.dp)
+            modifier = Modifier
+                .size(52.dp)
                 .background(Color.LightGray, CircleShape)
                 .padding(4.dp)
         )
