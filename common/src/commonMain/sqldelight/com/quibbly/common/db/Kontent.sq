@@ -1,0 +1,17 @@
+CREATE TABLE Content (
+    id INTEGER NOT NULL PRIMARY KEY,
+    name TEXT NOT NULL
+);
+
+deleteAllContent:
+DELETE FROM Content;
+
+selectAllContent:
+SELECT * FROM Content;
+
+insertContent:
+INSERT INTO Content(
+    id,
+    name
+)
+VALUES(?, ?);
