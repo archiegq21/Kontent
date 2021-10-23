@@ -3,9 +3,16 @@
 
     <string name="search">Search</string>
     <string name="clear_search">Clear Search</string>
+    <string name="back">Back</string>
+    <string name="favorite">Favorite</string>
+    <string name="purchase">Purchase</string>
+    <string name="description">Description</string>
+    <string name="genre">Genre</string>
+    <string name="artist">Artist</string>
 
     <string name="last_visited_date">Last Visited Date: %1$s</string>
     <string name="your_avatar">Your Avatar</string>
 
     <string name="movies">Movies</string>
+    <string name="price">Price</string>
 </resources>

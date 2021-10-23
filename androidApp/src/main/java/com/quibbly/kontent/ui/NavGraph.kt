@@ -6,6 +6,7 @@ import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import com.quibbly.kontent.ui.dashboard.DashboardDestinations
 import com.quibbly.kontent.ui.dashboard.dashboardNavigation
+import com.quibbly.kontent.ui.detail.detailViewNavigation
 
 @Composable
 fun NavGraph(
@@ -17,6 +18,10 @@ fun NavGraph(
         startDestination = DashboardDestinations.DASHBOARD_ROUTE,
     ) {
         dashboardNavigation(
+            navController = navController,
+            modifier = modifier,
+        )
+        detailViewNavigation(
             navController = navController,
             modifier = modifier,
         )

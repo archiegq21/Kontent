@@ -1,43 +1,26 @@
 package com.quibbly.kontent.ui.dashboard
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.ExperimentalAnimationApi
-import androidx.compose.animation.core.animateIntAsState
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.interaction.collectIsFocusedAsState
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Close
 import androidx.compose.material.icons.rounded.Person
-import androidx.compose.material.icons.rounded.Search
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
-import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.insets.LocalWindowInsets
-import com.google.accompanist.insets.navigationBarsHeight
+import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.statusBarsPadding
 import com.quibbly.kontent.R
+import com.quibbly.kontent.ui.detail.DetailViewDestinations
 import com.quibbly.kontent.ui.list.ContentList
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toJavaLocalDateTime
@@ -48,113 +31,54 @@ import java.time.format.DateTimeFormatter
 fun DashboardScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
+
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
-            SearchTopBar(
-                searchQuery = "",
-                onSearchChanged = { },
+            DashboardTopBar(
+                lastVisitedDate = LocalDateTime.parse("2018-12-14T09:55:00"),
                 modifier = Modifier,
             )
         },
-    ) {
+    ) { padding ->
         ContentList(
+        contents = emptyList(),
+            onContentSelected = {
+                navController.navigate(DetailViewDestinations.DETAILS_ROUTE)
+            },
             modifier = Modifier.fillMaxSize(),
             contentPadding = rememberInsetsPaddingValues(
                 insets = LocalWindowInsets.current.navigationBars,
-                additionalTop = 16.dp,
-                additionalEnd = 16.dp,
-                additionalBottom = 16.dp,
-                additionalStart = 16.dp,
+                additionalTop = 16.dp + padding.calculateTopPadding(),
+                additionalEnd = 16.dp + padding.calculateEndPadding(LocalLayoutDirection.current),
+                additionalBottom = 16.dp + padding.calculateBottomPadding(),
+                additionalStart = 16.dp + padding.calculateStartPadding(LocalLayoutDirection.current),
             )
         )
     }
 }
 
-@OptIn(
-    ExperimentalAnimationApi::class,
-    ExperimentalComposeUiApi::class,
-)
 @Composable
-private fun SearchTopBar(
-    searchQuery: String,
-    onSearchChanged: (String) -> Unit,
+private fun DashboardTopBar(
+    lastVisitedDate: LocalDateTime,
     modifier: Modifier = Modifier,
 ) {
-    val searchTextFieldInteractionSource = remember { MutableInteractionSource() }
-
     Surface(
         modifier = modifier
             .wrapContentHeight()
             .statusBarsPadding(),
         elevation = 4.dp,
     ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(
-                    horizontal = 16.dp,
-                    vertical = 16.dp,
-                ),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
-        ) {
-            UserHeader(
-                header = stringResource(R.string.app_name),
-                lastVisited = LocalDateTime.parse("2018-12-14T09:55:00"),
-                modifier = Modifier.fillMaxWidth(),
-            )
-            val keyboardController = LocalSoftwareKeyboardController.current
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(RoundedCornerShape(50)),
-                value = searchQuery,
-                keyboardOptions = KeyboardOptions(
-                    imeAction = ImeAction.Done,
-                ),
-                keyboardActions = KeyboardActions(
-                    onDone = { keyboardController?.hide() }
-                ),
-                onValueChange = onSearchChanged,
-                interactionSource = searchTextFieldInteractionSource,
-                singleLine = true,
-                maxLines = 1,
-                label = {
-                    Text(stringResource(R.string.search))
-                },
-                leadingIcon = {
-                    Icon(
-                        imageVector = Icons.Rounded.Search,
-                        contentDescription = stringResource(R.string.search),
-                    )
-                },
-                trailingIcon = {
-                    AnimatedVisibility(
-                        visible = searchQuery.isNotEmpty(),
-                        enter = fadeIn(),
-                        exit = fadeOut(),
-                    ) {
-                        IconButton(onClick = {
-                            onSearchChanged("")
-                        }) {
-                            Icon(
-                                imageVector = Icons.Rounded.Close,
-                                contentDescription = stringResource(R.string.clear_search),
-                            )
-                        }
-                    }
-                },
-                shape = RoundedCornerShape(50),
-                colors = TextFieldDefaults.textFieldColors(
-                    unfocusedIndicatorColor = Color.Transparent,
-                )
-            )
-        }
+        UserHeader(
+            header = stringResource(R.string.app_name),
+            lastVisited = lastVisitedDate,
+            modifier = Modifier.fillMaxWidth()
+                .navigationBarsPadding(bottom = false),
+        )
     }
 }
 
-@OptIn(ExperimentalCoilApi::class)
 @Composable
 fun UserHeader(
     header: String,
@@ -164,7 +88,10 @@ fun UserHeader(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 16.dp),
+            .padding(
+                horizontal = 16.dp,
+                vertical = 16.dp,
+            ),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically,
     ) {

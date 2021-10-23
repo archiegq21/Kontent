@@ -34,7 +34,8 @@ import com.quibbly.kontent.R
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ContentList(
-    contents: List<Content> = emptyList(),
+    contents: List<Content>,
+    onContentSelected: () -> Unit,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(16.dp),
@@ -60,65 +61,84 @@ fun ContentList(
         }
 //        contents.forEach { repo ->
         items(count = 100) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-            ) {
-                Box(
-                    modifier = Modifier
-                        .clip(RoundedCornerShape(4.dp))
-                        .background(Color.LightGray),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    Icon(
-                        imageVector = Icons.Rounded.Movie,
-                        tint = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
-                        contentDescription = null,
-                        modifier = Modifier.size(48.dp)
-                    )
-                    Image(
-                        modifier = Modifier.size(100.dp),
-                        painter = rememberImagePainter(
-                            data = "https://www.example.com/image.jpg",
-                            builder = {
-                                transformations(CircleCropTransformation())
-                            }
-                        ),
-                        contentDescription = null,
-                    )
-                }
-                Column(
-                    modifier = Modifier.weight(1f),
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
-                ) {
-                    Text(
-                        text = "Bad Boys for Life",
-                        style = MaterialTheme.typography.subtitle1,
-                    )
-                    CompositionLocalProvider(
-                        LocalContentAlpha provides ContentAlpha.medium,
-                        LocalTextStyle provides MaterialTheme.typography.caption,
-                    ) {
-                        Text(
-                            modifier = Modifier.border(
-                                1.dp,
-                                LocalContentColor.current,
-                                CircleShape,
-                            ).padding(
-                                horizontal = 8.dp,
-                                vertical = 4.dp,
-                            ),
-                            text = "Genre"
-                        )
-                    }
-                    Text(
-                        text = "$1,000.00",
-                        style = MaterialTheme.typography.body1,
-                    )
-                }
-            }
+            ContentCard(
+                onContentSelected = onContentSelected,
+                modifier = Modifier.fillMaxSize(),
+            )
 //            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterialApi::class)
+@Composable
+fun ContentCard(
+    onContentSelected: () -> Unit,
+    modifier: Modifier = Modifier,
+) {
+    Surface(
+        onClick = onContentSelected,
+        modifier = modifier,
+        shape = RoundedCornerShape(8.dp),
+        elevation = 2.dp,
+    ) {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            Box(
+                modifier = Modifier
+                    .clip(RoundedCornerShape(4.dp))
+                    .background(Color.LightGray),
+                contentAlignment = Alignment.Center,
+            ) {
+                Icon(
+                    imageVector = Icons.Rounded.Movie,
+                    tint = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
+                    contentDescription = null,
+                    modifier = Modifier.size(48.dp)
+                )
+                Image(
+                    modifier = Modifier.size(100.dp),
+                    painter = rememberImagePainter(
+                        data = "https://www.example.com/image.jpg",
+                        builder = {
+                            transformations(CircleCropTransformation())
+                        }
+                    ),
+                    contentDescription = null,
+                )
+            }
+            Column(
+                modifier = Modifier.weight(1f),
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
+                Text(
+                    text = "Bad Boys for Life",
+                    style = MaterialTheme.typography.subtitle1,
+                )
+                CompositionLocalProvider(
+                    LocalContentAlpha provides ContentAlpha.medium,
+                    LocalTextStyle provides MaterialTheme.typography.caption,
+                ) {
+                    Text(
+                        modifier = Modifier.border(
+                            1.dp,
+                            LocalContentColor.current,
+                            CircleShape,
+                        ).padding(
+                            horizontal = 8.dp,
+                            vertical = 4.dp,
+                        ),
+                        text = "Genre"
+                    )
+                }
+                Text(
+                    text = "$1,000.00",
+                    style = MaterialTheme.typography.body1,
+                )
+            }
         }
     }
 }

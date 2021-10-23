@@ -15,7 +15,7 @@ data class Content(
     val kind: Kind,
     val collectionId: Long,
     val trackId: Long,
-    val artistName: Long,
+    val artistName: String,
     val collectionName: String,
     val trackName: String,
     val collectionCensoredName: String,
