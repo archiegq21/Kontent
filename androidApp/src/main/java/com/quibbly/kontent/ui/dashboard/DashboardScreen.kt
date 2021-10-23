@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
@@ -31,7 +32,6 @@ import java.time.format.DateTimeFormatter
 fun DashboardScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-
 ) {
     Scaffold(
         modifier = modifier.fillMaxSize(),
@@ -43,7 +43,7 @@ fun DashboardScreen(
         },
     ) { padding ->
         ContentList(
-        contents = emptyList(),
+            contents = emptyList(),
             onContentSelected = {
                 navController.navigate(DetailViewDestinations.DETAILS_ROUTE)
             },
@@ -73,7 +73,8 @@ private fun DashboardTopBar(
         UserHeader(
             header = stringResource(R.string.app_name),
             lastVisited = lastVisitedDate,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .navigationBarsPadding(bottom = false),
         )
     }
@@ -104,11 +105,13 @@ fun UserHeader(
             )
             Spacer(Modifier.height(4.dp))
             Text(
-                text = stringResource(
-                    R.string.last_visited_date,
-                    lastVisited.toJavaLocalDateTime()
-                        .format(DateTimeFormatter.ofPattern("EEE, MMM d, yyyy"))
-                ),
+                text = stringResource(R.string.last_visited_date),
+                style = MaterialTheme.typography.caption,
+            )
+            Text(
+                text = lastVisited.toJavaLocalDateTime()
+                    .format(DateTimeFormatter.ofPattern("EEE, MMM d, yyyy hh:mm a")),
+                fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.caption,
             )
         }
