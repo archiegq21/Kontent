@@ -8,8 +8,21 @@ import com.squareup.sqldelight.runtime.coroutines.mapToOneOrNull
 import kotlinx.coroutines.flow.*
 
 interface KontentLocalSource {
+    /**
+     * Retrieves the list of [ContentDto] stored locally on device
+     *
+     * return list of [ContentDto]
+     * */
     fun getStoredContent(): Flow<List<ContentDto>>
 
+    /**
+     * Retrieves a [Content] by a given [id]
+     *
+     * @param id is the trackId of the [Content]
+     *
+     * @returns [ContentDto] with the given [id] and
+     *  null when nothing is retrieved
+     * */
     fun getContentById(id: Long): Flow<ContentDto?>
 
     suspend fun storeContent(contentDtos: List<ContentDto>)

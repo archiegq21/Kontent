@@ -8,8 +8,17 @@ import kotlinx.datetime.TimeZone
 import kotlinx.datetime.toLocalDateTime
 
 interface KontentPreferences {
+
+    /**
+     * Returns the [LocalDateTime] of the previous
+     * run of the application or returns null when
+     * nothings is stored yet (such as on first app run)
+     * */
     val lastVisitedDate: LocalDateTime?
 
+    /**
+     * Sets the VisitedDate when the app starts up
+     * */
     fun setLastVisitedDate(instant: Instant)
 }
 

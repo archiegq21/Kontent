@@ -54,6 +54,9 @@ class DashboardStateStore(
             .map { it ?: Content.Empty }
 }
 
+/**
+ * Describes the current state of the Content
+ * */
 data class ContentsState(
     val contents: List<Content> = emptyList(),
     val error: Throwable? = null,

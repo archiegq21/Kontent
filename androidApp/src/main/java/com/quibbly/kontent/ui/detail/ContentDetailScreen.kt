@@ -90,9 +90,14 @@ fun ContentDetailScreen(
             ImagePlaceHolder(
                 modifier = Modifier,
             ) {
+                // Unfortunately, this is the largest size
+                // artwork that the service returns. The size
+                // doesn't fit the actual ui size but at this
+                // point I don't want to recreate the UI, just
+                // to cater for the provided artwork.
                 Image(
                     painter = rememberImagePainter(
-                        data = content?.artworkUrl,
+                        data = content.artworkUrl,
                     ),
                     contentDescription = null,
                     modifier = Modifier.requiredHeight(200.dp)

@@ -10,8 +10,26 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.onStart
 
 interface DashboardRepository {
+
+    /**
+     * Retrieves the list of [Content] and since, this function
+     * returns a flow, it will automatically emit new list
+     * everytime the state changes
+     *
+     * @returns [Result] of the list of [Content]
+     * */
     fun getDashboardContent(): Flow<Result<List<Content>>>
+
+    /**
+     * Retrieves a Content by the given [id].
+     *
+     * @param id is the trackId of the Content
+     *
+     * @returns [Content] but would return null when no
+     *  content is retrieved
+     * */
     fun getContent(id: Long): Flow<Content?>
+
 }
 
 class DashboardRepositoryImpl(
