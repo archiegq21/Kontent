@@ -33,22 +33,9 @@ fun ContentCard(
 ) {
     ContentCard(
         image = {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(Color.LightGray),
-                contentAlignment = Alignment.Center,
+            ImagePlaceHolder(
+                modifier = Modifier,
             ) {
-                // Since I didn't want to import a drawable just
-                // to set a default placeholder, for Coil, I simply
-                // added this icon behind the Loading Image to act
-                // as a Default image once, the image fetch failed
-                Icon(
-                    imageVector = Icons.Rounded.Movie,
-                    tint = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp)
-                )
                 Image(
                     modifier = Modifier.requiredHeight(100.dp)
                         .aspectRatio(2/3f),

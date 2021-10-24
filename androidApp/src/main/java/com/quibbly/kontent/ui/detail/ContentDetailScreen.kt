@@ -29,6 +29,7 @@ import com.quibbly.kontent.R
 import com.quibbly.kontent.ui.composables.DetailValue
 import com.quibbly.kontent.ui.composables.FavoriteIconButton
 import com.quibbly.kontent.ui.composables.FavoriteState
+import com.quibbly.kontent.ui.composables.ImagePlaceHolder
 import com.quibbly.kontent.ui.util.formatToAmount
 
 @OptIn(ExperimentalCoilApi::class)
@@ -88,13 +89,18 @@ fun ContentDetailScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Image(
-                painter = rememberImagePainter(
-                    data = contentUi?.artworkUrl ?: "",
-                ),
-                contentDescription = null,
-                modifier = Modifier.size(200.dp)
-            )
+            ImagePlaceHolder(
+                modifier = Modifier,
+            ) {
+                Image(
+                    painter = rememberImagePainter(
+                        data = contentUi?.artworkUrl ?: "",
+                    ),
+                    contentDescription = null,
+                    modifier = Modifier.requiredHeight(200.dp)
+                        .aspectRatio(2/3f)
+                )
+            }
             Spacer(Modifier.height(24.dp))
             Row(
                 modifier = Modifier.fillMaxWidth(),
