@@ -41,3 +41,8 @@ The Android Application is fully created with [Jetpack Compose](https://develope
 3. Create custom theme (currently uses default theme)
 4. Add BuildTypes and Variants
 5. Create the iOS Application
+
+## APK
+A Signed APK could be retrieved [here](https://github.com/archiegq21/Kontent/blob/master/androidApp/release/kontent_app.apk).
+
+Note: The apk is signed with a debug key.
