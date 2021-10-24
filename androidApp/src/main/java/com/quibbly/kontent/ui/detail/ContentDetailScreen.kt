@@ -1,6 +1,7 @@
 package com.quibbly.kontent.ui.detail
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
+import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -8,10 +9,9 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.ArrowBack
-import androidx.compose.material.icons.rounded.FavoriteBorder
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -22,21 +22,24 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import coil.transform.CircleCropTransformation
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
+import com.quibbly.common.search.ContentUi
 import com.quibbly.kontent.R
 import com.quibbly.kontent.ui.composables.DetailValue
 import com.quibbly.kontent.ui.composables.FavoriteIconButton
 import com.quibbly.kontent.ui.composables.FavoriteState
+import com.quibbly.kontent.ui.util.formatToAmount
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ContentDetailScreen(
+    contentUi: ContentUi?,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
     val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
+
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -44,11 +47,15 @@ fun ContentDetailScreen(
                 modifier = Modifier
                     .statusBarsPadding()
                     .navigationBarsPadding(bottom = false),
-                title = {},
+                title = {
+                    Text(
+                        modifier = Modifier,
+                        text = contentUi?.title ?: "",
+                        style = MaterialTheme.typography.h6,
+                    )
+                },
                 navigationIcon = {
-                    IconButton(onClick = {
-                        backDispatcher?.onBackPressed()
-                    }) {
+                    IconButton(onClick = { backDispatcher?.onBackPressed() }) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
                             contentDescription = stringResource(R.string.back),
@@ -67,6 +74,7 @@ fun ContentDetailScreen(
         },
         bottomBar = {
             DetailBottomBar(
+                contentUi = contentUi,
                 modifier = Modifier,
             )
         }
@@ -80,15 +88,9 @@ fun ContentDetailScreen(
             verticalArrangement = Arrangement.Top,
             horizontalAlignment = Alignment.CenterHorizontally,
         ) {
-            Text(
-                modifier = Modifier,
-                text = "Fast & Furious 6",
-                style = MaterialTheme.typography.h6,
-            )
-            Spacer(Modifier.height(16.dp))
             Image(
                 painter = rememberImagePainter(
-                    data = "https://i.pinimg.com/originals/96/a0/0d/96a00d42b0ff8f80b7cdf2926a211e47.jpg",
+                    data = contentUi?.artworkUrl ?: "",
                 ),
                 contentDescription = null,
                 modifier = Modifier.size(200.dp)
@@ -104,7 +106,7 @@ fun ContentDetailScreen(
                     label = { Text(text = stringResource(R.string.artist)) },
                     value = {
                         Text(
-                            text = "Dwayne Johnson",
+                            text = contentUi?.artist ?: "",
                             maxLines = 1,
                         )
                     }
@@ -112,7 +114,7 @@ fun ContentDetailScreen(
                 DetailValue(
                     modifier = Modifier.weight(1f),
                     label = { Text(text = stringResource(R.string.genre)) },
-                    value = { Text(text = "Genre") }
+                    value = { Text(text = contentUi?.genre ?: "") }
                 )
             }
             Spacer(Modifier.height(24.dp))
@@ -129,7 +131,7 @@ fun ContentDetailScreen(
                 LocalTextStyle provides MaterialTheme.typography.subtitle1,
             ) {
                 Text(
-                    text = "Seasoned musician Jackson Maine (Bradley Cooper) discovers—and falls in love with—struggling artist Ally (Lady Gaga). She has just about given up on her dream to make it big as a singer… until Jack coaxes her into the spotlight. But even as Ally’s career takes off, the personal side of their relationship is breaking down, as Jack fights an ongoing battle with his own internal demons. Seasoned musician Jackson Maine (Bradley Cooper) discovers—and falls in love with—struggling artist Ally (Lady Gaga). She has just about given up on her dream to make it big as a singer… until Jack coaxes her into the spotlight. But even as Ally’s career takes off, the personal side of their relationship is breaking down, as Jack fights an ongoing battle with his own internal demons.",
+                    text = contentUi?.description ?: "",
                     textAlign = TextAlign.Justify,
                 )
             }
@@ -171,6 +173,7 @@ fun DetailTopBar(
 
 @Composable
 fun DetailBottomBar(
+    contentUi: ContentUi?,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colors.surface,
     contentColor: Color = contentColorFor(backgroundColor),
@@ -193,7 +196,13 @@ fun DetailBottomBar(
             DetailValue(
                 modifier = Modifier.weight(1f),
                 label = { Text(text = stringResource(R.string.price)) },
-                value = { Text(text = "$1,000.00") }
+                value = {
+                    Text(text = remember(contentUi?.price, contentUi?.currency) {
+                        contentUi?.let {
+                            contentUi.price.formatToAmount(contentUi.currency)
+                        } ?: ""
+                    })
+                }
             )
             Button(
                 modifier = Modifier,
@@ -201,7 +210,10 @@ fun DetailBottomBar(
                     defaultElevation = 0.dp,
                     pressedElevation = 0.dp,
                 ),
-                onClick = { /* TODO */ },
+                onClick = {
+                      // TODO, This does not do anything
+                      //  was only added for additional elements
+                },
             ) {
                 Text(text = stringResource(id = R.string.purchase))
             }

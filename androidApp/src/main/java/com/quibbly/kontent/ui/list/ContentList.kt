@@ -1,46 +1,49 @@
 package com.quibbly.kontent.ui.list
 
-import androidx.compose.foundation.Image
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.slideIn
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.DriveFileRenameOutline
-import androidx.compose.material.icons.rounded.Movie
-import androidx.compose.material.icons.rounded.Person
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
-import coil.compose.rememberImagePainter
-import coil.transform.CircleCropTransformation
-import com.google.accompanist.insets.navigationBarsHeight
-import com.quibbly.common.domain.search.Content
+import com.quibbly.common.search.ContentUi
+import com.quibbly.common.search.ContentUiState
 import com.quibbly.kontent.R
+import com.quibbly.kontent.ui.composables.ContentCard
+import com.quibbly.kontent.ui.composables.ContentCardPlaceHolder
+import com.quibbly.kontent.ui.composables.EmptyPlaceHolder
+import com.quibbly.kontent.ui.composables.shimmer
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ContentList(
-    contents: List<Content>,
-    onContentSelected: () -> Unit,
+    isRefreshing: Boolean,
+    onRetry: () -> Unit,
+    contentUiState: ContentUiState,
+    onContentSelected: (ContentUi) -> Unit,
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
     contentPadding: PaddingValues = PaddingValues(16.dp),
     reverseLayout: Boolean = false,
-    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(8.dp),
+    verticalArrangement: Arrangement.Vertical = Arrangement.spacedBy(16.dp),
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
 ) {
@@ -53,92 +56,83 @@ fun ContentList(
         horizontalAlignment = horizontalAlignment,
         flingBehavior = flingBehavior,
     ) {
-        item {
-            Text(
-                text = stringResource(R.string.movies),
-                style = MaterialTheme.typography.h6,
-            )
-        }
-//        contents.forEach { repo ->
-        items(count = 100) {
-            ContentCard(
-                onContentSelected = onContentSelected,
-                modifier = Modifier.fillMaxSize(),
-            )
-//            }
+        when {
+            isRefreshing && contentUiState.contents.isEmpty() -> emptyContentLoading()
+            contentUiState.contents.isEmpty() && contentUiState.containsError() ->
+                emptyContent(
+                    hasError = true,
+                    onRetry = onRetry,
+                )
+            contentUiState.contents.isEmpty() ->
+                emptyContent(
+                    hasError = false,
+                    onRetry = onRetry,
+                )
+            else -> content(contentUiState, onContentSelected)
         }
     }
 }
 
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-fun ContentCard(
-    onContentSelected: () -> Unit,
-    modifier: Modifier = Modifier,
+private fun LazyListScope.content(
+    contentUiState: ContentUiState,
+    onContentSelected: (ContentUi) -> Unit,
 ) {
-    Surface(
-        onClick = onContentSelected,
-        modifier = modifier,
-        shape = RoundedCornerShape(8.dp),
-        elevation = 2.dp,
-    ) {
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(8.dp),
+    item(key = ErrorBanner) {
+        AnimatedVisibility(
+            visible = contentUiState.containsError(),
+            enter = slideInVertically { -it },
+            exit = slideOutVertically { it },
         ) {
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(4.dp))
-                    .background(Color.LightGray),
-                contentAlignment = Alignment.Center,
-            ) {
-                Icon(
-                    imageVector = Icons.Rounded.Movie,
-                    tint = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
-                    contentDescription = null,
-                    modifier = Modifier.size(48.dp)
-                )
-                Image(
-                    modifier = Modifier.size(100.dp),
-                    painter = rememberImagePainter(
-                        data = "https://www.example.com/image.jpg",
-                        builder = {
-                            transformations(CircleCropTransformation())
-                        }
-                    ),
-                    contentDescription = null,
-                )
-            }
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(4.dp),
-            ) {
-                Text(
-                    text = "Bad Boys for Life",
-                    style = MaterialTheme.typography.subtitle1,
-                )
-                CompositionLocalProvider(
-                    LocalContentAlpha provides ContentAlpha.medium,
-                    LocalTextStyle provides MaterialTheme.typography.caption,
-                ) {
-                    Text(
-                        modifier = Modifier.border(
-                            1.dp,
-                            LocalContentColor.current,
-                            CircleShape,
-                        ).padding(
-                            horizontal = 8.dp,
-                            vertical = 4.dp,
-                        ),
-                        text = "Genre"
-                    )
-                }
-                Text(
-                    text = "$1,000.00",
-                    style = MaterialTheme.typography.body1,
-                )
-            }
+            Text(
+                text = stringResource(R.string.content_fetch_failed),
+                style = MaterialTheme.typography.caption,
+            )
+        }
+    }
+    item(key = MovieTitleKey) {
+        Text(
+            text = stringResource(R.string.movies),
+            style = MaterialTheme.typography.h6,
+        )
+    }
+    contentUiState.contents.forEach { contentUi ->
+        item {
+            ContentCard(
+                contentUi = contentUi,
+                onContentSelected = { onContentSelected(contentUi) },
+                modifier = Modifier.fillMaxSize(),
+            )
         }
     }
 }
+
+private fun LazyListScope.emptyContentLoading() {
+    item(key = MovieTitleKey) {
+        Text(
+            modifier = Modifier
+                .fillMaxWidth(0.6f)
+                .shimmer(),
+            text = "",
+        )
+    }
+    items(count = 100) {
+        ContentCardPlaceHolder(modifier = Modifier.fillMaxSize())
+    }
+}
+
+private fun LazyListScope.emptyContent(
+    hasError: Boolean,
+    onRetry: () -> Unit,
+) {
+    item(key = EmptyContent) {
+        EmptyPlaceHolder(
+            modifier = Modifier.fillParentMaxSize(),
+            hasError = hasError,
+            retry = onRetry,
+        )
+    }
+}
+
+private const val MovieTitleKey = "MovieTitle"
+private const val ErrorBanner = "ErrorBanner"
+private const val EmptyContent = "EmptyContent"

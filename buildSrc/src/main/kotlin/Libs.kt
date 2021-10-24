@@ -38,6 +38,7 @@ object Libs {
             const val coil = "io.coil-kt:coil-compose:1.3.2"
             const val insets = "com.google.accompanist:accompanist-insets:$accompanist_version"
             const val swipe_refresh = "com.google.accompanist:accompanist-swiperefresh:$accompanist_version"
+            const val navigation_animation = "com.google.accompanist:accompanist-navigation-animation:$accompanist_version"
         }
     }
 
@@ -71,6 +72,11 @@ object Libs {
             const val native_logging = "io.ktor:ktor-client-logging-native:1.3.1"
             const val logback = "ch.qos.logback:logback-classic:$logback_version"
         }
+    }
+
+    object MultipaltformSettings {
+        private const val version = "0.7.7"
+        const val no_args = "com.russhwolf:multiplatform-settings-no-arg:$version"
     }
 
     object SqlDelight {

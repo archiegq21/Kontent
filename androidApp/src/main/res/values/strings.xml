@@ -15,4 +15,9 @@
 
     <string name="movies">Movies</string>
     <string name="price">Price</string>
+
+    <string name="content_fetch_failed">There seems to be a problem.</string>
+    <string name="content_empty">There seem to be no content at the moment.</string>
+    <string name="content_not_done">We\'re still working on your content.</string>
+    <string name="try_again">Try again?</string>
 </resources>

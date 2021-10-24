@@ -7,6 +7,7 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +21,11 @@ import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.rememberInsetsPaddingValues
 import com.google.accompanist.insets.statusBarsPadding
+import com.google.accompanist.swiperefresh.SwipeRefresh
+import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
+import com.google.accompanist.swiperefresh.SwipeRefreshState
+import com.quibbly.common.search.ContentUi
+import com.quibbly.common.search.ContentUiState
 import com.quibbly.kontent.R
 import com.quibbly.kontent.ui.detail.DetailViewDestinations
 import com.quibbly.kontent.ui.list.ContentList
@@ -30,6 +36,10 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun DashboardScreen(
+    contentUiState: ContentUiState,
+    onContentUiSelected: (ContentUi) -> Unit,
+    swipeRefreshState: SwipeRefreshState,
+    onRefresh: () -> Unit,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -42,20 +52,34 @@ fun DashboardScreen(
             )
         },
     ) { padding ->
-        ContentList(
-            contents = emptyList(),
-            onContentSelected = {
-                navController.navigate(DetailViewDestinations.DETAILS_ROUTE)
+        SwipeRefresh(
+            state = swipeRefreshState,
+            onRefresh = onRefresh,
+            indicator = { state, trigger ->
+                SwipeRefreshIndicator(
+                    state = state,
+                    refreshTriggerDistance = trigger,
+                    scale = false,
+                    backgroundColor = MaterialTheme.colors.primary,
+                    shape = MaterialTheme.shapes.small,
+                )
             },
-            modifier = Modifier.fillMaxSize(),
-            contentPadding = rememberInsetsPaddingValues(
-                insets = LocalWindowInsets.current.navigationBars,
-                additionalTop = 16.dp + padding.calculateTopPadding(),
-                additionalEnd = 16.dp + padding.calculateEndPadding(LocalLayoutDirection.current),
-                additionalBottom = 16.dp + padding.calculateBottomPadding(),
-                additionalStart = 16.dp + padding.calculateStartPadding(LocalLayoutDirection.current),
+        ) {
+            ContentList(
+                isRefreshing = swipeRefreshState.isRefreshing,
+                onRetry = onRefresh,
+                contentUiState = contentUiState,
+                onContentSelected = onContentUiSelected,
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = rememberInsetsPaddingValues(
+                    insets = LocalWindowInsets.current.navigationBars,
+                    additionalTop = 16.dp + padding.calculateTopPadding(),
+                    additionalEnd = 16.dp + padding.calculateEndPadding(LocalLayoutDirection.current),
+                    additionalBottom = 16.dp + padding.calculateBottomPadding(),
+                    additionalStart = 16.dp + padding.calculateStartPadding(LocalLayoutDirection.current),
+                )
             )
-        )
+        }
     }
 }
 

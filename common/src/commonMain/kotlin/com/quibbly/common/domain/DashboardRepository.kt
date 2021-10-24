@@ -3,13 +3,11 @@ package com.quibbly.common.domain
 import com.quibbly.common.db.KontentLocalSource
 import com.quibbly.common.domain.search.Content
 import com.quibbly.common.domain.search.MediaType
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.flowOf
-import kotlinx.coroutines.flow.onEmpty
+import kotlinx.coroutines.flow.*
 
 interface DashboardRepository {
-    fun getDashboardContent(): Flow<List<Content>>
+    fun getDashboardContent(): Flow<Result<List<Content>>>
+    fun getContent(id: Long): Flow<Content?>
 }
 
 class DashboardRepositoryImpl(
@@ -17,20 +15,25 @@ class DashboardRepositoryImpl(
     private val kontentLocalSource: KontentLocalSource,
 ) : DashboardRepository {
 
-    override fun getDashboardContent(): Flow<List<Content>> = flow {
-        emit(
-            service.search(
-                term = "star",
-                country = "au",
-                media = MediaType.movie,
-            ).fold({
-//            kontentLocalSource.storeContent(it.results)
-                it.results
-            }, {
-                println(it.stackTraceToString())
-                emptyList()
-            })
-        )
+    override fun getDashboardContent(): Flow<Result<List<Content>>> =
+        kontentLocalSource.getStoredContent()
+            .map {
+                Result.success(it)
+            }.onStart {
+                fetchContent().fold({
+                    kontentLocalSource.storeContent(it)
+                }, {
+                    print(it.stackTraceToString())
+                })
+            }
+
+    private suspend fun fetchContent(): Result<List<Content>> = service.search(
+        term = "star",
+        country = "au",
+        media = MediaType.movie,
+    ).mapCatching {
+        it.results
     }
 
+    override fun getContent(id: Long) = kontentLocalSource.getContentById(id)
 }
