@@ -2,10 +2,10 @@ package com.quibbly.kontent.ui
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.quibbly.common.search.DashboardStore
+import com.quibbly.common.search.DashboardStateStore
 
 class AppViewModel : ViewModel() {
 
-    val dashboardStore = DashboardStore(viewModelScope)
+    val dashboardStore = DashboardStateStore(viewModelScope)
 
 }

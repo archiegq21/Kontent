@@ -1,10 +1,10 @@
-package com.quibbly.common.domain
+package com.quibbly.common.services
 
-import com.quibbly.common.domain.search.*
+import com.quibbly.common.dto.search.*
 import io.ktor.client.*
 import io.ktor.client.request.*
 
-interface ITunesService {
+interface KontentService {
     suspend fun search(
         term: String,
         country: String,
@@ -18,9 +18,9 @@ interface ITunesService {
     ): Result<SearchResponse>
 }
 
-class ITunesServiceImpl(
+class KontentServiceImpl(
     private val httpClient: HttpClient,
-) : ITunesService {
+) : KontentService {
 
     override suspend fun search(
         term: String,

@@ -9,12 +9,13 @@ import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavType
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
-import com.quibbly.common.search.DashboardStore
+import com.quibbly.common.domain.Content
+import com.quibbly.common.search.DashboardStateStore
 import com.quibbly.kontent.ui.detail.DetailViewDestinations.Id
 
 @OptIn(ExperimentalAnimationApi::class)
 internal fun NavGraphBuilder.detailViewNavigation(
-    dashboardStore: DashboardStore,
+    dashboardStateStore: DashboardStateStore,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
@@ -23,10 +24,10 @@ internal fun NavGraphBuilder.detailViewNavigation(
         arguments = listOf(navArgument(Id) { type = NavType.LongType }),
     ) { backStackEntry ->
         val selectedId = backStackEntry.arguments!!.getLong(Id)
-        val selectedContentUi by dashboardStore.getSelectedContentUi(selectedId)
-            .collectAsState(null)
+        val selectedContent by dashboardStateStore.getSelectedContentUi(selectedId)
+            .collectAsState(Content.Empty)
         ContentDetailScreen(
-            contentUi = selectedContentUi,
+            content = selectedContent,
             navController = navController,
             modifier = modifier,
         )

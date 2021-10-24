@@ -4,14 +4,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import com.quibbly.common.search.DashboardStore
+import com.quibbly.common.search.DashboardStateStore
 import com.quibbly.kontent.ui.dashboard.DashboardDestinations
 import com.quibbly.kontent.ui.dashboard.dashboardNavigation
 import com.quibbly.kontent.ui.detail.detailViewNavigation
 
 @Composable
 fun NavGraph(
-    dashboardStore: DashboardStore,
+    dashboardStateStore: DashboardStateStore,
     navController: NavHostController,
     modifier: Modifier = Modifier,
 ) {
@@ -20,12 +20,12 @@ fun NavGraph(
         startDestination = DashboardDestinations.DASHBOARD_ROUTE,
     ) {
         dashboardNavigation(
-            dashboardStore = dashboardStore,
+            dashboardStateStore = dashboardStateStore,
             navController = navController,
             modifier = modifier,
         )
         detailViewNavigation(
-            dashboardStore = dashboardStore,
+            dashboardStateStore = dashboardStateStore,
             navController = navController,
             modifier = modifier,
         )

@@ -75,8 +75,9 @@ object Libs {
     }
 
     object MultipaltformSettings {
-        private const val version = "0.7.7"
+        private const val version = "0.8.1"
         const val no_args = "com.russhwolf:multiplatform-settings-no-arg:$version"
+        const val coroutines = "com.russhwolf:multiplatform-settings-coroutines-native-mt:$version"
     }
 
     object SqlDelight {

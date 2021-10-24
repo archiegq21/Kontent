@@ -7,7 +7,6 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.rounded.Person
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -16,7 +15,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import coil.annotation.ExperimentalCoilApi
 import com.google.accompanist.insets.LocalWindowInsets
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.rememberInsetsPaddingValues
@@ -24,10 +22,9 @@ import com.google.accompanist.insets.statusBarsPadding
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.SwipeRefreshIndicator
 import com.google.accompanist.swiperefresh.SwipeRefreshState
-import com.quibbly.common.search.ContentUi
-import com.quibbly.common.search.ContentUiState
+import com.quibbly.common.domain.Content
+import com.quibbly.common.search.ContentsState
 import com.quibbly.kontent.R
-import com.quibbly.kontent.ui.detail.DetailViewDestinations
 import com.quibbly.kontent.ui.list.ContentList
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.toJavaLocalDateTime
@@ -36,8 +33,8 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun DashboardScreen(
-    contentUiState: ContentUiState,
-    onContentUiSelected: (ContentUi) -> Unit,
+    contentsState: ContentsState,
+    onContentUiSelected: (Content) -> Unit,
     swipeRefreshState: SwipeRefreshState,
     onRefresh: () -> Unit,
     navController: NavController,
@@ -68,7 +65,7 @@ fun DashboardScreen(
             ContentList(
                 isRefreshing = swipeRefreshState.isRefreshing,
                 onRetry = onRefresh,
-                contentUiState = contentUiState,
+                contentsState = contentsState,
                 onContentSelected = onContentUiSelected,
                 modifier = Modifier.fillMaxSize(),
                 contentPadding = rememberInsetsPaddingValues(
@@ -94,37 +91,14 @@ private fun DashboardTopBar(
             .statusBarsPadding(),
         elevation = 4.dp,
     ) {
-        UserHeader(
-            header = stringResource(R.string.app_name),
-            lastVisited = lastVisitedDate,
-            modifier = Modifier
-                .fillMaxWidth()
-                .navigationBarsPadding(bottom = false),
-        )
-    }
-}
-
-@Composable
-fun UserHeader(
-    header: String,
-    lastVisited: LocalDateTime,
-    modifier: Modifier = Modifier,
-) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(
-                horizontal = 16.dp,
-                vertical = 16.dp,
-            ),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
         Column(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.fillMaxWidth()
+                .navigationBarsPadding(bottom = false)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
         ) {
             Text(
-                text = header,
+                text = stringResource(R.string.app_name),
                 style = MaterialTheme.typography.h6,
             )
             Spacer(Modifier.height(4.dp))
@@ -133,20 +107,11 @@ fun UserHeader(
                 style = MaterialTheme.typography.caption,
             )
             Text(
-                text = lastVisited.toJavaLocalDateTime()
+                text = lastVisitedDate.toJavaLocalDateTime()
                     .format(DateTimeFormatter.ofPattern("EEE, MMM d, yyyy hh:mm a")),
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.caption,
             )
         }
-        Icon(
-            imageVector = Icons.Rounded.Person,
-            tint = LocalContentColor.current.copy(alpha = ContentAlpha.disabled),
-            contentDescription = stringResource(R.string.your_avatar),
-            modifier = Modifier
-                .size(52.dp)
-                .background(Color.LightGray, CircleShape)
-                .padding(4.dp)
-        )
     }
 }

@@ -8,25 +8,25 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
-import com.quibbly.common.search.DashboardStore
+import com.quibbly.common.search.DashboardStateStore
 import com.quibbly.kontent.ui.detail.DetailViewDestinations
 
 @OptIn(ExperimentalAnimationApi::class)
 internal fun NavGraphBuilder.dashboardNavigation(
-    dashboardStore: DashboardStore,
+    dashboardStateStore: DashboardStateStore,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
     composable(DashboardDestinations.DASHBOARD_ROUTE) {
-        val isRefreshing by dashboardStore.isRefreshing.collectAsState()
-        val contentUiState by dashboardStore.dashboardContent.collectAsState()
+        val isRefreshing by dashboardStateStore.isRefreshing.collectAsState()
+        val contentUiState by dashboardStateStore.contentsState.collectAsState()
         DashboardScreen(
-            contentUiState = contentUiState,
+            contentsState = contentUiState,
             onContentUiSelected = {
                 navController.navigate(DetailViewDestinations.navigationRouteFor(it.id))
             },
             swipeRefreshState = rememberSwipeRefreshState(isRefreshing),
-            onRefresh = dashboardStore::refresh,
+            onRefresh = dashboardStateStore::refresh,
             navController = navController,
             modifier = modifier,
         )

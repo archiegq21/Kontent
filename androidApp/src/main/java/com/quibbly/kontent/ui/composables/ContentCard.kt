@@ -1,33 +1,27 @@
 package com.quibbly.kontent.ui.composables
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.rounded.Movie
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
-import com.quibbly.common.search.ContentUi
+import com.quibbly.common.domain.Content
 import com.quibbly.kontent.ui.util.formatToAmount
-import java.text.NumberFormat
-import java.util.*
 
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ContentCard(
-    contentUi: ContentUi,
+    content: Content,
     onContentSelected: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
@@ -40,21 +34,21 @@ fun ContentCard(
                     modifier = Modifier.requiredHeight(100.dp)
                         .aspectRatio(2/3f),
                     painter = rememberImagePainter(
-                        data = contentUi.artworkUrl,
+                        data = content.artworkUrl,
                     ),
                     contentDescription = null,
                 )
             }
         },
         title = {
-            Text(text = contentUi.title)
+            Text(text = content.title)
         },
         genre = {
-            Text(text = contentUi.genre)
+            Text(text = content.genre)
         },
         price = {
-            Text(text = remember(contentUi.price, contentUi.currency) {
-                contentUi.price.formatToAmount(contentUi.currency)
+            Text(text = remember(content.price, content.currency) {
+                content.price.formatToAmount(content.currency)
             })
         },
         onContentSelected = onContentSelected,

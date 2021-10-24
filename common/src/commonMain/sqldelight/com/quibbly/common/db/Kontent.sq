@@ -1,17 +1,62 @@
-CREATE TABLE Content (
-    id INTEGER NOT NULL PRIMARY KEY,
-    name TEXT NOT NULL
+import com.quibbly.common.dto.search.Kind;
+
+CREATE TABLE ContentDbDto (
+    id INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    trackId INTEGER NOT NULL,
+    wrapperType TEXT NOT NULL,
+    kind TEXT AS Kind,
+    artistName TEXT NOT NULL,
+    trackName TEXT NOT NULL,
+    trackViewUrl TEXT NOT NULL,
+    previewUrl TEXT NOT NULL,
+    artworkUrl30 TEXT,
+    artworkUrl60 TEXT,
+    artworkUrl100 TEXT,
+    collectionPrice REAL NOT NULL,
+    trackPrice REAL NOT NULL,
+    collectionHdPrice REAL NOT NULL,
+    trackHdPrice REAL NOT NULL,
+    country TEXT NOT NULL,
+    currency TEXT NOT NULL,
+    primaryGenreName TEXT NOT NULL,
+    contentAdvisoryRating TEXT NOT NULL,
+    description TEXT,
+    shortDescription TEXT,
+    longDescription TEXT
 );
 
+getContentWithId:
+SELECT * FROM ContentDbDto WHERE trackId = ?;
+
 deleteAllContent:
-DELETE FROM Content;
+DELETE FROM ContentDbDto;
 
 selectAllContent:
-SELECT * FROM Content;
+SELECT * FROM ContentDbDto;
 
 insertContent:
-INSERT INTO Content(
+INSERT INTO ContentDbDto(
     id,
-    name
+    trackId,
+    wrapperType,
+    kind,
+    artistName,
+    trackName,
+    trackViewUrl,
+    previewUrl,
+    artworkUrl30,
+    artworkUrl60,
+    artworkUrl100,
+    collectionPrice,
+    trackPrice,
+    collectionHdPrice,
+    trackHdPrice,
+    country,
+    currency,
+    primaryGenreName,
+    contentAdvisoryRating,
+    description,
+    shortDescription,
+    longDescription
 )
-VALUES(?, ?);
+VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?);

@@ -1,19 +1,18 @@
 package com.quibbly.common.search
 
-import com.quibbly.common.domain.DashboardRepository
-import com.quibbly.common.domain.search.Content
-import com.quibbly.common.domain.search.toContentUi
+import com.quibbly.common.domain.Content
+import com.quibbly.common.services.DashboardRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
-class DashboardStore(
-    scope: CoroutineScope,
-) : Store(scope), KoinComponent {
+class DashboardStateStore(
+    private val scope: CoroutineScope,
+    initialState: ContentsState = ContentsState(),
+) : KoinComponent {
 
     private val dashboardRepository: DashboardRepository by inject()
 
@@ -26,33 +25,30 @@ class DashboardStore(
     }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val dashboardContent: StateFlow<ContentUiState> = isRefreshingFlow.filter { it }
+    val contentsState: StateFlow<ContentsState> = isRefreshingFlow.filter { it }
         .flatMapLatest {
             dashboardRepository.getDashboardContent()
-        }.scan(ContentUiState()) { previous, current ->
+        }.scan(initialState) { previous, current ->
             current.fold({ contents ->
-                ContentUiState(
-                    contents = contents.map {
-                        it.toContentUi()
-                    }
-                )
+                ContentsState(contents = contents)
             }, {
                 previous.copy(error = it)
             })
         }.onEach {
             isRefreshingFlow.emit(false)
-        }.stateIn(scope, SharingStarted.Eagerly, ContentUiState())
+        }.stateIn(scope, SharingStarted.Eagerly, initialState)
 
     init {
         refresh()
     }
 
-    fun getSelectedContentUi(id: Long): Flow<ContentUi?> =
-        dashboardRepository.getContent(id).map { it?.toContentUi() }
+    fun getSelectedContentUi(id: Long): Flow<Content> =
+        dashboardRepository.getContent(id)
+            .map { it ?: Content.Empty }
 }
 
-data class ContentUiState(
-    val contents: List<ContentUi> = emptyList(),
+data class ContentsState(
+    val contents: List<Content> = emptyList(),
     val error: Throwable? = null,
 ) {
     fun containsError() = error != null

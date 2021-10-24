@@ -1,4 +1,4 @@
-package com.quibbly.common.domain.search
+package com.quibbly.common.dto.search
 
 enum class Explicit {
     Yes,

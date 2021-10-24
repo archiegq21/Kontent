@@ -1,7 +1,6 @@
 package com.quibbly.kontent.ui.detail
 
 import androidx.activity.compose.LocalOnBackPressedDispatcherOwner
-import androidx.compose.animation.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -24,7 +23,7 @@ import coil.annotation.ExperimentalCoilApi
 import coil.compose.rememberImagePainter
 import com.google.accompanist.insets.navigationBarsPadding
 import com.google.accompanist.insets.statusBarsPadding
-import com.quibbly.common.search.ContentUi
+import com.quibbly.common.domain.Content
 import com.quibbly.kontent.R
 import com.quibbly.kontent.ui.composables.DetailValue
 import com.quibbly.kontent.ui.composables.FavoriteIconButton
@@ -35,12 +34,10 @@ import com.quibbly.kontent.ui.util.formatToAmount
 @OptIn(ExperimentalCoilApi::class)
 @Composable
 fun ContentDetailScreen(
-    contentUi: ContentUi?,
+    content: Content,
     navController: NavController,
     modifier: Modifier = Modifier,
 ) {
-    val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
-
     Scaffold(
         modifier = modifier.fillMaxSize(),
         topBar = {
@@ -51,11 +48,12 @@ fun ContentDetailScreen(
                 title = {
                     Text(
                         modifier = Modifier,
-                        text = contentUi?.title ?: "",
+                        text = content.title,
                         style = MaterialTheme.typography.h6,
                     )
                 },
                 navigationIcon = {
+                    val backDispatcher = LocalOnBackPressedDispatcherOwner.current?.onBackPressedDispatcher
                     IconButton(onClick = { backDispatcher?.onBackPressed() }) {
                         Icon(
                             imageVector = Icons.Rounded.ArrowBack,
@@ -75,7 +73,7 @@ fun ContentDetailScreen(
         },
         bottomBar = {
             DetailBottomBar(
-                contentUi = contentUi,
+                content = content,
                 modifier = Modifier,
             )
         }
@@ -94,7 +92,7 @@ fun ContentDetailScreen(
             ) {
                 Image(
                     painter = rememberImagePainter(
-                        data = contentUi?.artworkUrl ?: "",
+                        data = content?.artworkUrl,
                     ),
                     contentDescription = null,
                     modifier = Modifier.requiredHeight(200.dp)
@@ -112,7 +110,7 @@ fun ContentDetailScreen(
                     label = { Text(text = stringResource(R.string.artist)) },
                     value = {
                         Text(
-                            text = contentUi?.artist ?: "",
+                            text = content?.artist,
                             maxLines = 1,
                         )
                     }
@@ -120,7 +118,7 @@ fun ContentDetailScreen(
                 DetailValue(
                     modifier = Modifier.weight(1f),
                     label = { Text(text = stringResource(R.string.genre)) },
-                    value = { Text(text = contentUi?.genre ?: "") }
+                    value = { Text(text = content.genre) }
                 )
             }
             Spacer(Modifier.height(24.dp))
@@ -137,7 +135,7 @@ fun ContentDetailScreen(
                 LocalTextStyle provides MaterialTheme.typography.subtitle1,
             ) {
                 Text(
-                    text = contentUi?.description ?: "",
+                    text = content.description,
                     textAlign = TextAlign.Justify,
                 )
             }
@@ -179,7 +177,7 @@ fun DetailTopBar(
 
 @Composable
 fun DetailBottomBar(
-    contentUi: ContentUi?,
+    content: Content,
     modifier: Modifier = Modifier,
     backgroundColor: Color = MaterialTheme.colors.surface,
     contentColor: Color = contentColorFor(backgroundColor),
@@ -203,10 +201,8 @@ fun DetailBottomBar(
                 modifier = Modifier.weight(1f),
                 label = { Text(text = stringResource(R.string.price)) },
                 value = {
-                    Text(text = remember(contentUi?.price, contentUi?.currency) {
-                        contentUi?.let {
-                            contentUi.price.formatToAmount(contentUi.currency)
-                        } ?: ""
+                    Text(text = remember(content.price, content.currency) {
+                        content.price.formatToAmount(content.currency)
                     })
                 }
             )

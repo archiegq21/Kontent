@@ -81,8 +81,6 @@ kotlin {
 
                 implementation(Libs.SqlDelight.runtime)
                 implementation(Libs.SqlDelight.coroutines_ktx)
-
-                implementation(Libs.MultipaltformSettings.no_args)
             }
         }
         val commonTest by getting

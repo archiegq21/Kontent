@@ -1,6 +1,6 @@
-package com.quibbly.common.search
+package com.quibbly.common.domain
 
-data class ContentUi(
+data class Content(
     val id: Long,
     val artworkUrl: String,
     val title: String,
@@ -12,7 +12,7 @@ data class ContentUi(
     val artist: String,
 ) {
     companion object {
-        val Empty = ContentUi(
+        val Empty = Content(
             id = 0,
             artworkUrl = "",
             title = "",

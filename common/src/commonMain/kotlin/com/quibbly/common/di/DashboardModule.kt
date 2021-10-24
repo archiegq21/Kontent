@@ -1,9 +1,7 @@
 package com.quibbly.common.di
 
-import com.quibbly.common.domain.DashboardRepository
-import com.quibbly.common.domain.DashboardRepositoryImpl
-import com.quibbly.common.domain.ITunesService
-import com.quibbly.common.domain.ITunesServiceImpl
+import com.quibbly.common.services.DashboardRepository
+import com.quibbly.common.services.DashboardRepositoryImpl
 import org.koin.dsl.module
 
 fun dashboardModule() = module {

@@ -7,7 +7,9 @@ fun Double.formatToAmount(
     currencyCode: String,
 ): String {
     val numberFormat = NumberFormat.getInstance().apply {
-        currency = Currency.getInstance(currencyCode)
+        if (currencyCode.isNotEmpty()) {
+            currency = Currency.getInstance(currencyCode)
+        }
     }
     return "${numberFormat.format(this)} $currencyCode"
 }
