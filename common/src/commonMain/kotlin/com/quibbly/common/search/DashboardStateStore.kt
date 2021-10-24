@@ -1,11 +1,13 @@
 package com.quibbly.common.search
 
+import com.quibbly.common.db.KontentPreferences
 import com.quibbly.common.domain.Content
 import com.quibbly.common.services.DashboardRepository
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
+import kotlinx.datetime.LocalDateTime
 import org.koin.core.component.KoinComponent
 import org.koin.core.component.inject
 
@@ -15,6 +17,11 @@ class DashboardStateStore(
 ) : KoinComponent {
 
     private val dashboardRepository: DashboardRepository by inject()
+    private val kontentPreferences: KontentPreferences by inject()
+
+    val lastVisitedDate = MutableStateFlow(
+        kontentPreferences.lastVisitedDate
+    ).asStateFlow()
 
     private val isRefreshingFlow = MutableStateFlow(false)
     val isRefreshing = isRefreshingFlow.asStateFlow()

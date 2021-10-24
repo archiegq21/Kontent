@@ -20,7 +20,9 @@ internal fun NavGraphBuilder.dashboardNavigation(
     composable(DashboardDestinations.DASHBOARD_ROUTE) {
         val isRefreshing by dashboardStateStore.isRefreshing.collectAsState()
         val contentUiState by dashboardStateStore.contentsState.collectAsState()
+        val lastVisitedDate by dashboardStateStore.lastVisitedDate.collectAsState()
         DashboardScreen(
+            lastVisitedDate = lastVisitedDate,
             contentsState = contentUiState,
             onContentUiSelected = {
                 navController.navigate(DetailViewDestinations.navigationRouteFor(it.id))

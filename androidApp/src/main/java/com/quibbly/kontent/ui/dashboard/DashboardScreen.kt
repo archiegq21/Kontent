@@ -33,6 +33,7 @@ import java.time.format.DateTimeFormatter
 
 @Composable
 fun DashboardScreen(
+    lastVisitedDate: LocalDateTime?,
     contentsState: ContentsState,
     onContentUiSelected: (Content) -> Unit,
     swipeRefreshState: SwipeRefreshState,
@@ -44,7 +45,7 @@ fun DashboardScreen(
         modifier = modifier.fillMaxSize(),
         topBar = {
             DashboardTopBar(
-                lastVisitedDate = LocalDateTime.parse("2018-12-14T09:55:00"),
+                lastVisitedDate = lastVisitedDate,
                 modifier = Modifier,
             )
         },
@@ -82,7 +83,7 @@ fun DashboardScreen(
 
 @Composable
 private fun DashboardTopBar(
-    lastVisitedDate: LocalDateTime,
+    lastVisitedDate: LocalDateTime?,
     modifier: Modifier = Modifier,
 ) {
     Surface(
@@ -92,7 +93,8 @@ private fun DashboardTopBar(
         elevation = 4.dp,
     ) {
         Column(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier
+                .fillMaxWidth()
                 .navigationBarsPadding(bottom = false)
                 .padding(horizontal = 16.dp, vertical = 8.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -107,8 +109,9 @@ private fun DashboardTopBar(
                 style = MaterialTheme.typography.caption,
             )
             Text(
-                text = lastVisitedDate.toJavaLocalDateTime()
-                    .format(DateTimeFormatter.ofPattern("EEE, MMM d, yyyy hh:mm a")),
+                text = lastVisitedDate?.toJavaLocalDateTime()
+                    ?.format(DateTimeFormatter.ofPattern("EEE, MMM d, yyyy hh:mm a"))
+                    ?: stringResource(id = R.string.first_visit),
                 fontWeight = FontWeight.SemiBold,
                 style = MaterialTheme.typography.caption,
             )
